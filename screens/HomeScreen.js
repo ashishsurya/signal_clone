@@ -1,15 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import CustomListItem from '../components/CustomListItem';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
+  const [chats, setChats] = useState([]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Signal',
@@ -35,7 +37,10 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity activeOpacity={0.7}>
             <AntDesign name='camerao' size={24} color='black' />
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Add Chat')}
+            activeOpacity={0.7}
+          >
             <SimpleLineIcons name='pencil' size={24} color='black' />
           </TouchableOpacity>
         </View>
@@ -47,15 +52,44 @@ const HomeScreen = ({ navigation }) => {
       navigation.replace('Login');
     });
   };
+
+  useEffect(() => {
+    const unsubscribe = db.collection('chats').onSnapshot((snapShot) => {
+      setChats(
+        snapShot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const enterChat = (id, chatName) => {
+    navigation.navigate('Chat', { id, chatName });
+  };
+
   return (
     <SafeAreaView>
-      <StatusBar style='dark' />
-      <ScrollView>
-        <CustomListItem />
+      <StatusBar style='auto' />
+      <ScrollView style={styles.container}>
+        {chats.map(({ id, data: { chatName } }) => (
+          <CustomListItem
+            key={id}
+            id={id}
+            chatName={chatName}
+            enterChat={enterChat}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
 };
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+  },
+});

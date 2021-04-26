@@ -1,22 +1,26 @@
-import React from "react";
-import { TouchableOpacity } from "react-native";
-import { StyleSheet, Text, View } from "react-native";
-import { ListItem, Avatar } from "react-native-elements";
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { ListItem, Avatar } from 'react-native-elements';
 
 const CustomListItem = ({ id, chatName, enterChat }) => {
+  console.log(id, chatName);
   return (
-    <TouchableOpacity activeOpacity={0.7}>
-      <ListItem>
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => enterChat(id, chatName)}
+    >
+      <ListItem key={id} bottomDivider={true}>
         <Avatar
           rounded
           source={{
             uri:
-              "https://lh3.googleusercontent.com/proxy/56NLsnrA1YUHbhw7s9v84KsabPTLx34UH7aFwSsI2vjhQaklVd20A_gF_eqZw0JdS0Hb7aDxaoWd5Hnncu8MfDo5I6AqaVLogcS9Iq-rtcaF0XcZ--TKZikgcc90",
+              'https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg',
           }}
         />
         <ListItem.Content>
-          <ListItem.Title style={{ fontWeight: "700" }}>
-            YouTube Chat
+          <ListItem.Title style={{ fontWeight: '700' }}>
+            {chatName}
           </ListItem.Title>
           <ListItem.Subtitle numberOfLines={1}>
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
